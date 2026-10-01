@@ -158,7 +158,21 @@ class Deposit(tk.Tk):
 
         # Calculate and save new balance
         new_balance = balance + amount
-
+        # Ask customer to confirm the transaction
+        confirm = messagebox.askyesno(
+            "Confirm Deposit",
+            f"Current Balance: RM {balance:.2f}\n"
+            f"Deposit Amount: RM {amount:.2f}\n"
+            f"New Balance: RM {new_balance:.2f}\n\n"
+            "Do you want to proceed?"
+            )
+        if not confirm:
+            messagebox.showinfo(
+                "Cancelled",
+                "Your deposit has been cancelled."
+                )
+            return
+        
         try:
             success = update_balance(pin, new_balance)
         except OSError:

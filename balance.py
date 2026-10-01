@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+import subprocess
 
 DB = "database.txt"
 
@@ -56,6 +57,14 @@ class Balance(tk.Tk):
         )
         check_button.place(x=145, y=190)
 
+        back_button = tk.Button(
+            self,
+            text="Back",
+            font=("Courier", 12),
+            command=self.go_back
+        )
+        back_button.place(x=190, y=250)
+
     def check_balance(self):
         pin = self.pin_entry.get()
 
@@ -74,6 +83,9 @@ class Balance(tk.Tk):
                 f"Your current balance is RM {balance:.2f}"
             )
 
+    def go_back(self):
+        subprocess.Popen(["python", "option.py"])
+        self.destroy()
 
 if __name__ == "__main__":
     start = Balance()

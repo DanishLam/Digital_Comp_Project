@@ -2,9 +2,9 @@
 import tkinter as tk
 from tkinter import messagebox
 from decimal import Decimal, InvalidOperation
-from pathlib import Path
 
-DB = Path(__file__).resolve().parent / "database.txt"
+
+DB = "database.txt"
 
 
 # Find the account linked to the entered PIN

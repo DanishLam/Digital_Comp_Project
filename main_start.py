@@ -16,23 +16,30 @@ class Main_Start(tk.Tk):
         self.configure(bg="OrangeRed3")
         
         
-        L = Label(self, text= "Enter Pin:")
-        L.config(font=("Courier", 14),
-                 height= 2)
+        self.L = Label(self, text= "Enter Pin:")
+        self.L.config(font=("Courier", 14),
+                 height= 1)
         
         self.Pin = Entry(self,
                     show="*")
             
-        btn = Button(self, 
-                     text="Test", 
-                     height= 3,
+        self.btn = Button(self, 
+                     text="Enter", 
+                     height= 2,
                      width= 15,
                      command= self.btn_switch)
+        self.T = Label(self,
+                  text= "Invalid PIN",
+                  font=("Courier", 14),
+                  bg="gold2",)
+
         
         
-        L.place(x=100, y=100)
+        
+        self.L.place(x=100, y=107)
         self.Pin.place(x=250, y=110)
-        btn.place(x=175, y=175)
+        self.btn.place(x=175, y=175)
+        self.T.place_forget()
         
     def btn_switch(self):
         Pin_Input = self.Pin.get()
@@ -45,8 +52,11 @@ class Main_Start(tk.Tk):
                     subprocess.Popen(["python", "option.py"])
                     self.destroy()
                     
-                else:
-                    print("Error")
+                elif Pin_Input != data[0]:
+                    self.L.place(x=100, y=125)
+                    self.Pin.place(x=250, y=129)
+                    self.btn.place(x=175, y=185)
+                    self.T.place(x=170, y=50)
         return None 
 
 if __name__ == "__main__":

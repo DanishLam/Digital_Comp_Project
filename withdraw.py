@@ -118,3 +118,104 @@ class Withdraw(tk.Tk):
         pin = self.pin_entry.get().strip()
         amount_text = self.amount_entry.get().strip()
 
+        #validate pin num
+        try:
+            balance = get_balance(pin)
+        except OSError:
+            messagebox.showerror(
+                "Error",
+                "Unable to read the account database."
+            )
+            return
+
+        if balance is None:
+            messagebox.showerror(
+                "Error",
+                "Invalid PIN."
+            )
+            return
+
+        #validate amount of withdrawal
+        try:
+            amount = Decimal(amount_text)
+
+            if not amount.is_finite():
+                raise ValueError
+
+            if amount <= 0:
+                raise ValueError
+
+            if amount.as_tuple().exponent < -2:
+                raise ValueError
+
+        except (InvalidOperation, ValueError):
+            messagebox.showerror(
+                "Error",
+                "Enter a valid positive amount with "
+                "a maximum of two decimal places."
+            )
+            return
+
+        #check balance cukup ke tk
+        if amount > balance:
+            messagebox.showerror(
+                "Insufficient Money",
+                f"Your current balance is RM {balance:.2f}\n\n"
+                f"Requested amount: RM {amount:.2f}"
+            )
+            return
+
+        #cal new balance
+        new_balance = balance - amount
+
+        #ask to confirm the withdrawal
+        confirm = messagebox.askyesno(
+            "Confirm Withdrawal",
+            f"Current Balance: RM {balance:.2f}\n"
+            f"Withdrawal Amount: RM {amount:.2f}\n"
+            f"New Balance: RM {new_balance:.2f}\n\n"
+            "Do you want to proceed?"
+        )
+
+        if not confirm:
+            messagebox.showinfo(
+                "Cancelled",
+                "Your withdrawal has been cancelled."
+            )
+            return
+
+        #save new bal
+        try:
+            success = update_balance(pin, new_balance)
+        except OSError:
+            messagebox.showerror(
+                "Error",
+                "Unable to save your withdrawal."
+            )
+            return
+
+        if not success:
+            messagebox.showerror(
+                "Error",
+                "Account could not be updated."
+            )
+            return
+
+        #show success msg
+        messagebox.showinfo(
+            "Withdrawal Successful",
+            f"Amount Withdrawn: RM {amount:.2f}\n"
+            f"Remaining Balance: RM {new_balance:.2f}"
+        )
+
+        #clear ammount field
+        self.amount_entry.delete(0, tk.END)
+
+    def go_back(self):
+        subprocess.Popen(["python", "option.py"])
+        self.destroy()
+
+
+if __name__ == "__main__":
+    start = Withdraw()
+    start.mainloop()
